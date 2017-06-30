@@ -90,3 +90,8 @@ get_subjects <- function(x) {
   ans <- dplyr::mutate(ans,armn  = match(arm,unique(arm)),ID=seq_len(n()))
   dplyr::select(ans,armn,arm,ID,everything())
 }
+
+
+used_sequences <- function(x) {
+  sapply(x$arm,function(y) y$sequence)
+}
