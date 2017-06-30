@@ -1,0 +1,25 @@
+name: Simulation 1
+reps: 100
+endpoints: [CP, RESP]
+output_file: saved.RDS
+model: pk1cmt
+covariates:
+  wt:  {distribution: rlnorm,    args: [50, 20]}
+  sex: {distribution: rbinomial, args: [0.5]}
+  age: {distribution: runif,     args: [21,42]}
+covset:
+  cov1: [wt,sex]
+period:
+  a: {amt: 100, ii: 12, addl: 7}
+  b: {amt: 200, ii: 12, addl: 3}
+  c: {amt: 500, ii: 24, addl: 1}
+sequence:
+  s1: [a, b, c]
+  s2: [b, a, a]
+  s3: c
+arm:
+  a1: {sequence: s3, nid: 30, covset: cov1}
+  a2: {sequence: s2, nid: 20, covset: cov2}
+  a3: {period: a, nid: 5}
+
+
