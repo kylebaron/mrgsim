@@ -1,0 +1,12 @@
+mrgsolve.Rcheck
+.DS_store
+test.R
+*.o
+*.so
+*.Rproj
+Rchecks
+.Rproj.user
+.Rhistory
+*.tar.gz
+!package/*.tar.gz
+*00_pkg_src

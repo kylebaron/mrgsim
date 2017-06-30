@@ -35,6 +35,13 @@ then_ev <- function(df,x) {
   df
 }
 
+expand_events <- function(x, id) {
+  x <- .Call("mrgsolve_EXPAND_EVENTS", 0, data.matrix(x), id,
+             PACKAGE="mrgsolve")
+  as.data.frame(x)
+}
+
+
 ev <- vector(mode="list", length=length(x$sequence))
 names(ev) <- names(x$sequence)
 for(i in seq_along(x$sequence)) {
@@ -44,6 +51,10 @@ for(i in seq_along(x$sequence)) {
   ss <- bind_rows(ss)
   ev[[i]] <- then_ev(ss,x)
 }
+
+
+expand_events(ev[[2]], 1:3)
+
 
 
 df$ID <- 1
