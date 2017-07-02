@@ -30,8 +30,9 @@ then_ev <- function(df,x) {
 
 # Take in the workflow object and return events
 # named by sequence name
+
 ##' @export
-make_ev_list <- function(x) {
+make_periods <- function(x) {
   ev <- vector(mode="list", length=length(x$sequence))
   names(ev) <- names(x$sequence)
   for(i in seq_along(x$sequence)) {
@@ -65,7 +66,7 @@ assemble_formula <- function(...,distribution,call=NULL,formula=NULL,
 
 ##' @export
 make_cov_formulae <- function(x) {
-  y <- add_name_list(x$covariates,where="var")
+  y <- add_name_list(x$covariate,where="var")
   lapply(y,FUN=do.call,what=assemble_formula)
 }
 
@@ -77,21 +78,152 @@ make_covsets <- function(x,cov_form=NULL) {
   })
 }
 
+make_designs <- function(x) {
+ lapply(x, do.call, what=mrgsolve::tgrid)
+
+}
+
 
 ##' @export
 get_subjects <- function(x) {
-  x <- add_name_list(x$arm,where="arm")
-  ans <- lapply(x, function(y) {
-    period <- y$period
-    if(is.null(period)) period <- y$sequence
-    data_frame(arm=y$arm,ID=seq_len(y$nid),sequence=y$sequence,period=period)
+
+  x$arm <- add_name_list(x$arm, where="arm")
+  ans <- lapply(x$arm, function(y) {
+    data_frame(arm=y$arm,ID=seq_len(y$nid),
+               sequence=y$sequence,covset=y$covset,sample=y$sample)
   })
   ans <- bind_rows(ans)
-  ans <- dplyr::mutate(ans,armn  = match(arm,unique(arm)),ID=seq_len(n()))
-  dplyr::select(ans,armn,arm,ID,everything())
+  ans <- dplyr::mutate(ans,
+                       .covsetn = match(covset,names(x$covset)),
+                       .armn  = match(arm,names(x$arm)),
+                       .sequencen = match(sequence,names(x$sequence)),
+                       .sample = match(sample,names(x$sample)),
+                       ID=seq_len(n()))
+  dplyr::select(ans,ID,.armn,.covsetn,.sequencen)
 }
 
 
 used_sequences <- function(x) {
   sapply(x$arm,function(y) y$sequence)
+}
+
+
+do_covariates <- function(x) !is.na(x$covariate[1])
+
+##' @export
+get_arms <- function(x) {
+  ans <- bind_rows(lapply(x$arm, dplyr::as_data_frame))
+  ans$arm <- names(x$arm)
+  return(ans)
+}
+
+##' @export
+get_sequences <- function(x) {
+  sequence <- names(x$sequence)
+  periods <- sapply(x$sequence,FUN=paste, collapse=",")
+  data_frame(sequence=sequence,periods=periods)
+}
+
+##' @export
+load_run <- function(file) {
+
+  if(!file.exists(file)) {
+    stop("could not find file ", file, call.=FALSE)
+  }
+
+  x <- yaml.load_file(file)
+
+  x$file <- file
+
+  missing <- setdiff(names(.yaml1),names(x))
+
+  x <- c(x,.yaml1[missing])
+
+  if(!is.na(x$envir)) {
+    rcode <- strsplit(x$envir, split="\n")[[1]]
+    x$envir <- new.env()
+    foo <- eval(parse(text=rcode),envir=x$envir)
+  }
+
+  x <- handle_periods(x)
+
+  for(i in seq_along(x$arm)) {
+    if(is.null(x$arm[[i]]$nid)) {
+      stop("nid is required for every arm",call.=FALSE)
+    }
+    # If there is no sample indicated, take the first
+    if(is.null(x$arm[[i]]$sample)) {
+      x$arm[[i]]$sample <- names(x$sample)[1]
+    }
+    # If there is no sequence, take the first
+    if(is.null(x$arm[[i]]$sequence)){
+      x$arm[[i]]$sequence <- names(x$sequence)[1]
+    }
+  }
+
+  x$arms <- get_arms(x)
+
+  x$sequences <- get_sequences(x)
+
+  periods <- make_periods(x)
+  idata <- get_subjects(x)
+
+  covsets <- list()
+  if(do_covariates(x)) {
+    covsets <- make_covsets(x)
+    check_covsets(covsets,x)
+  }
+
+  x$designs <- make_designs(x$sample)
+
+  data <- mrgsolve::assign_ev(periods[unique(idata$.sequencen)],
+                              idata,".sequencen", join=FALSE)
+
+  x$data <- data
+  x$idata <- idata
+  x$periods <- periods
+  x$covsets <- covsets
+  x
+}
+
+##' @export
+sim_run <- function(mod,x,join=FALSE) {
+
+  carry.out <- ".armn"
+  if(join) carry.out <- ""
+  out <- mrgsim(mod,data=x$data,idata=x$idata,
+                carry.out=carry.out,
+                Req=x$endpoints,obsonly=TRUE)
+  out <- dplyr::as_data_frame(out)
+  if(join) {
+    tojoin <- dplyr::left_join(x$join,x$idata,by="ID")
+    out <- dplyr::left_join(out,tojoin,by="ID")
+  }
+  out
+}
+
+
+calculate_ids <- function(x) {
+  nid <- s_pick(x$arm,"nid")
+  end <- cumsum(nid)
+  start <- c(0,end[-length(end)])+1
+  ans <- mapply(start,end,SIMPLIFY=FALSE,FUN=function(x,y) {
+    seq(x,y)
+  })
+  names(ans) <- names(x$arm)
+  ans
+}
+
+##' @export
+get_idata <- function(x) {
+  a <- get_subjects(x)
+  a <- group_by(a,.covsetn)
+  ungroup(do(a,apply_covset(.,x)))
+}
+
+
+apply_covset <- function(df,x) {
+  n <- as.integer(df[1,".covsetn"])
+  covset <- x$covsets[[n]]
+  mutate_random(df,covset,envir=x$envir)
 }

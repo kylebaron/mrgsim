@@ -6,7 +6,7 @@ expand_events <- function(x, id) {
 }
 ##' @export
 add_name_list <- function(x,where="name") {
-  mapply(x,names(x),FUN=function(a,b) {
+  mapply(x,names(x),SIMPLIFY=FALSE,FUN=function(a,b) {
     a[[where]] <- b
     a
   })
@@ -121,3 +121,13 @@ where_is <- function(what,x) {
 where_first <- function(what,x) {
   as.integer(unlist(regexpr(what,x,fixed=TRUE)))
 }
+
+#
+# eval_ENV_block <- function(x,where,envir=new.env(),...) {
+#   .x <- try(eval(parse(text=x),envir=envir))
+#   if(inherits(.x,"try-error")) {
+#     stop("Failed to parse code in $ENV",call.=FALSE)
+#   }
+#   envir$.code <- x
+#   return(envir)
+# }
