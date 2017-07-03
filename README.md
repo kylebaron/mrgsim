@@ -1,4 +1,5 @@
 
+## CTS, several arms
 ```yaml
 name: Simulation 1
 
@@ -41,4 +42,36 @@ arm:
 objects:
   - "Sigma <- diag(c(1,1))"
   - "mu <- log(c(2,20))"
+```
+
+
+## Pediatrics and adults
+- Illustrates how to use different covsets for different populations
+```yaml
+name: Pediatrics and adults, same dose
+
+endpoints: [DV]
+
+output_file: saved.RDS
+
+model: popex
+
+covariate:
+  WT1:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.5, by: ID, lb: 50, ub: 120, as: WT}
+  WT2:   {distribution: rlnorm,  meanlog: 3.6 , sdlog: 0.5, by: ID, lb: 25, ub: 80,  as: WT}
+
+covset:
+  cov1: [WT1]
+  cov2: [WT2]
+
+period:
+  dose100: {amt: 100, ii: 24, addl: 168}
+
+sample:
+  des1: {end: 4032, delta: 24, add: [0]}
+
+arm:
+  adult:     {nid: 250, sequence: dose100, covset: cov1}
+  pediatric: {nid: 250, sequence: dose100, covset: cov2}
+
 ```

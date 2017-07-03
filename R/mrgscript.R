@@ -189,7 +189,7 @@ load_run <- function(file) {
   x$arms$covsetn <- match(x$arms$covset,names(covsets))
   x$arms$sequencen <- match(x$arms$sequence,names(periods))
   x$arms$samplen <- match(x$arms$sample,names(x$sample))
-
+  x$arms$armn <- match(x$arms$arm,names(x$arm))
   x
 }
 
@@ -211,10 +211,10 @@ sim_run <- function(mod,x,join=FALSE,.Request=x$endpoints) {
                        tgrid=des,
                        obsonly=TRUE,
                        Req=.Request,
-                       carry.out="sequencen")
+                       carry.out="armn")
     out[[i]] <- as_data_frame(out[[i]])
-    out[[i]] <- mutate(out[[i]],sequence=.arm$sequence)
-    out[[i]] <- dplyr::select(out[[i]],ID,time,sequence,sequencen,everything())
+    out[[i]] <- mutate(out[[i]],arm=.arm$arm)
+    out[[i]] <- dplyr::select(out[[i]],ID,time,arm,armn,everything())
   }
   bind_rows(out)
 }
