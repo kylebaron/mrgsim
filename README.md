@@ -4,37 +4,20 @@ library(mrgsolve)
 library(dplyr)
 ```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
 Load a model
 ------------
 
 ``` r
 mod <- mread("popex", modlib())
-```
 
-    ## Compiling popex ...
-
-    ## done.
-
-``` r
 param(mod)
 ```
 
-    ## 
-    ##  Model parameters (N=4):
-    ##  name value . name value
-    ##  TVCL 1     | TVV  24   
-    ##  TVKA 0.5   | WT   70
+    . 
+    .  Model parameters (N=4):
+    .  name value . name value
+    .  TVCL 1     | TVV  24   
+    .  TVKA 0.5   | WT   70
 
 Load a scripted simulation run
 ------------------------------
@@ -54,7 +37,7 @@ out <- sim_run(mod,run)
 dim(out)
 ```
 
-    ## [1] 109850      5
+    . [1] 109850      5
 
 ``` r
 out %>%
@@ -63,12 +46,12 @@ out %>%
   summarise(Mean = mean(DV), Min = min(DV), Max = max(DV))
 ```
 
-    ## # A tibble: 3 x 4
-    ##     arm      Mean         Min      Max
-    ##   <chr>     <dbl>       <dbl>    <dbl>
-    ## 1  arm1  7.979157 0.336360027 45.06762
-    ## 2  arm2  3.296814 0.001505591 24.19253
-    ## 3  arm3 17.452070 0.419366660 78.37478
+    . # A tibble: 3 x 4
+    .     arm      Mean        Min      Max
+    .   <chr>     <dbl>      <dbl>    <dbl>
+    . 1  arm1  7.269966 0.09839506 31.59274
+    . 2  arm2  3.383121 0.02429191 17.18271
+    . 3  arm3 14.789310 0.03717534 98.01029
 
 The simulation run specification
 --------------------------------

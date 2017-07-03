@@ -7,6 +7,7 @@ output:
 
 ```{r,echo=FALSE}
 library(knitr)
+knitr::opts_chunk$set(comment='.', message=FALSE)
 ```
 
 ```{r}
