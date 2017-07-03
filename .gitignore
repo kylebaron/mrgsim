@@ -1,4 +1,4 @@
-mrgsolve.Rcheck
+mrgsim.Rcheck
 .DS_store
 test.R
 *.o

@@ -1,5 +1,5 @@
 
-#' @importFrom dmutate mutate_random covset
+#' @importFrom dmutate mutate_random covset rbinomial rmvnorm rlmvnorm
 #' @importFrom dplyr data_frame mutate bind_rows left_join as_data_frame slice everything
 #' @importMethodsFrom mrgsolve as.data.frame
 #' @importFrom mrgsolve assign_ev ev tgrid as.ev mrgsim

@@ -32,9 +32,9 @@ sample:
   des1: {end: 4032, delta: 24, add: [0]}
 
 arm:
-  a1: {nid: 250, sequence: s1, covset: cov1}
-  a2: {nid: 250, sequence: s2, covset: cov2}
-  a3: {nid: 150, sequence: c,  covset: cov1}
+  arm1: {nid: 250, sequence: s1, covset: cov1}
+  arm2: {nid: 250, sequence: s2, covset: cov2}
+  arm3: {nid: 150, sequence: c,  covset: cov1}
 
 objects:
   - "Sigma <- diag(c(1,1))"

@@ -109,13 +109,12 @@ calculate_ids <- function(nid) {
   ans <- mapply(start,end,SIMPLIFY=FALSE,FUN=function(x,y) {
     seq(x,y)
   })
-  names(ans) <- names(x$arm)
   ans
 }
 
 get_ids <- function(x) {
  nid <- s_pick(x$arm,"nid")
- calculate_ids(nid)
+ setNames(calculate_ids(nid),names(x$arm))
 }
 
 ##' Simulate from a scripted run.

@@ -1,0 +1,61 @@
+---
+title: "Untitled"
+output: 
+  md_document:
+    variant: markdown_github
+---
+
+```{r,echo=FALSE}
+library(knitr)
+```
+
+```{r}
+library(mrgsim)
+library(mrgsolve)
+library(dplyr)
+```
+
+
+
+## Load a model
+```{r}
+mod <- mread("popex", modlib())
+
+param(mod)
+```
+
+## Load a scripted simulation run
+```{r}
+run <- load_run("foo.yaml")
+```
+
+## Simulate
+
+```{r}
+out <- sim_run(mod,run)
+```
+
+```{r}
+dim(out)
+
+out %>%
+  group_by(arm) %>% 
+  filter(time==4032) %>%
+  summarise(Mean = mean(DV), Min = min(DV), Max = max(DV))
+```
+
+
+## The simulation run specification
+```{r,echo=FALSE, comment=" "}
+yam <- readLines("foo.yaml")
+cat(yam, sep="\n")
+```
+
+## Run specification for pediatric / adult pk
+```{r,echo=FALSE, comment=" "}
+yam <- readLines("ped_adult.yaml")
+cat(yam, sep="\n")
+```
+
+
+
