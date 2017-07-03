@@ -7,7 +7,7 @@ objects: [Sigma,mu]
 covariate:
   WT:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.2, by: ID, lb: 40, ub: 140}
   SEX:  {distribution: rbinomial, p: 0.5}
-  AGE:  {distribution: runif, min: 21, max: 42 , by: .armn}
+  AGE:  {distribution: runif, min: 21, max: 42}
   EGFR: {call: "runif(22,34)"}
   B:    {call: "runif(22,22)"}
   A:    {formula: "a[0,]+b[0,]~rmvnorm(log(c(2,22)),Sigma)"}

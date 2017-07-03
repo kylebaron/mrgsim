@@ -138,9 +138,13 @@ load_run <- function(file) {
 
   x <- c(x,.yaml1[missing])
 
-  if(!is.na(x$envir)) {
-    rcode <- strsplit(x$envir, split="\n")[[1]]
-    x$envir <- new.env()
+  x$envir <- new.env()
+  rcode <- NULL
+  if(!is.null(x$script)) {
+    rcode <- strsplit(x$script, split="\n")[[1]]
+  }
+  rcode <- c(rcode,x$objects)
+  if(!is.null(rcode)) {
     foo <- eval(parse(text=rcode),envir=x$envir)
   }
 
@@ -189,19 +193,29 @@ load_run <- function(file) {
 }
 
 ##' @export
-sim_run <- function(mod,x,join=FALSE) {
-
-  carry.out <- ".armn"
-  if(join) carry.out <- ""
-  out <- mrgsim(mod,data=x$data,idata=x$idata,
-                carry.out=carry.out,
-                Req=x$endpoints,obsonly=TRUE)
-  out <- dplyr::as_data_frame(out)
-  if(join) {
-    tojoin <- dplyr::left_join(x$join,x$idata,by="ID")
-    out <- dplyr::left_join(out,tojoin,by="ID")
+sim_run <- function(mod,x,join=FALSE,.Request=x$endpoints) {
+  out <- vector(mode="list", length(length(x$arm)))
+  ids <- get_ids(x)
+  for(i in seq_along(x$arm)) {
+    .arm <- slice(x$arms,i)
+    ev <- x$periods[[.arm$sequence]]
+    this_arm <- slice(x$arms,rep(i,.arm$nid))
+    this_arm$ID <- ids[[i]]
+    des <- x$designs[[.arm$sample]]
+    idata <- dplyr::select(this_arm,-sample,-sequence,-covset,-arm)
+    idata <- mutate_random(idata,x$covsets[[.arm$covsetn]],x$envir)
+    out[[i]] <- mrgsim(mod,
+                       idata=idata,
+                       events=ev,
+                       tgrid=des,
+                       obsonly=TRUE,
+                       Req=.Request,
+                       carry.out="sequencen")
+    out[[i]] <- as_data_frame(out[[i]])
+    out[[i]] <- mutate(out[[i]],sequence=.arm$sequence)
+    out[[i]] <- dplyr::select(out[[i]],ID,time,sequence,sequencen,everything())
   }
-  out
+  bind_rows(out)
 }
 
 
