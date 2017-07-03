@@ -12,6 +12,7 @@ project: /Users/kyleb/Rlibs/mrgsolve/models
 
 covariate:
   WT:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.5, by: ID, lb: 40, ub: 140}
+  wt:   {formula: "wt[40,140]~rlnorm(4.3,0.5)|ID"}
   SEX:  {distribution: rbinomial, p: 0.5}
   AGE:  {distribution: runif, min: 21, max: 42}
 
