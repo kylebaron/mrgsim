@@ -1,15 +1,16 @@
 Package: mrgscript
 Type: Package
-Title: What the Package Does (Title Case)
+Title: Scripted simulation with 'mrgsolve'.
 Version: 0.0.1
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Author: Kyle T. Baron
+Maintainer: Kyle T. Baron <kyleb@metrumrg.com>
+Description: Simulation runs are scripted by yaml specification.
 License: GPL (>=2)
 Imports:
   dplyr,
-  mrgsolve
+  mrgsolve,
+  dmutate,
+  yaml
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
