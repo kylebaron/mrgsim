@@ -16,6 +16,7 @@ library(mrgsolve)
 library(dplyr)
 ```
 
+# Scripted simulation runs with `mrgsolve`
 
 
 ## Load a model
@@ -42,7 +43,7 @@ dim(out)
 out %>%
   group_by(arm) %>% 
   filter(time==4032) %>%
-  summarise(Mean = mean(DV), Min = min(DV), Max = max(DV))
+  summarise(Mean = mean(DV), Min = min(DV), Max = max(DV), N=n())
 ```
 
 

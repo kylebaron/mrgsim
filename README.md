@@ -4,6 +4,9 @@ library(mrgsolve)
 library(dplyr)
 ```
 
+Scripted simulation runs with `mrgsolve`
+========================================
+
 Load a model
 ------------
 
@@ -43,15 +46,15 @@ dim(out)
 out %>%
   group_by(arm) %>% 
   filter(time==4032) %>%
-  summarise(Mean = mean(DV), Min = min(DV), Max = max(DV))
+  summarise(Mean = mean(DV), Min = min(DV), Max = max(DV), N=n())
 ```
 
-    . # A tibble: 3 x 4
-    .     arm      Mean        Min      Max
-    .   <chr>     <dbl>      <dbl>    <dbl>
-    . 1  arm1  7.269966 0.09839506 31.59274
-    . 2  arm2  3.383121 0.02429191 17.18271
-    . 3  arm3 14.789310 0.03717534 98.01029
+    . # A tibble: 3 x 5
+    .     arm      Mean         Min      Max     N
+    .   <chr>     <dbl>       <dbl>    <dbl> <int>
+    . 1  arm1  7.097706 0.003359715 36.18642   250
+    . 2  arm2  3.341170 0.086254375 21.59198   250
+    . 3  arm3 17.480715 0.127742831 79.70234   150
 
 The simulation run specification
 --------------------------------
