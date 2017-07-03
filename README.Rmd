@@ -32,10 +32,47 @@ param(mod)
 run <- load_run("foo.yaml")
 ```
 
+
+The run has arms
+```{r}
+arms(run)
+```
+
+treatment sequences
+```{r}
+sequences(run)
+```
+
+treatment periods
+```{r}
+run$periods
+```
+
+covariate sets
+```{r}
+covsets(run)
+```
+
+sampling times
+```{r}
+run$designs
+```
+
+
+
 ## Simulate
 
-```{r}
+```{r,eval=FALSE}
 out <- sim_run(mod,run)
+```
+
+```{r,eval=TRUE,echo=FALSE}
+runtime <- system.time(out <- sim_run(mod,run))
+```
+
+
+```{r}
+runtime
 ```
 
 ```{r}

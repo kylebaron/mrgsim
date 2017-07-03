@@ -29,12 +29,113 @@ Load a scripted simulation run
 run <- load_run("foo.yaml")
 ```
 
+The run has arms
+
+``` r
+arms(run)
+```
+
+    . # A tibble: 3 x 9
+    .     nid sequence covset sample   arm covsetn sequencen samplen  armn
+    .   <int>    <chr>  <chr>  <chr> <chr>   <int>     <int>   <int> <int>
+    . 1   250       s1   cov1   des1  arm1       1         1       1     1
+    . 2   250       s2   cov2   des1  arm2       2         2       1     2
+    . 3   150        c   cov1   des1  arm3       1         6       1     3
+
+treatment sequences
+
+``` r
+sequences(run)
+```
+
+    . # A tibble: 6 x 2
+    .   sequence periods
+    .      <chr>   <chr>
+    . 1       s1     a,b
+    . 2       s2     a,a
+    . 3       s3       c
+    . 4        a       a
+    . 5        b       b
+    . 6        c       c
+
+treatment periods
+
+``` r
+run$periods
+```
+
+    . $s1
+    . Events:
+    .   time cmt amt ii addl evid
+    . 1    0   1 100 24   83    1
+    . 2 2016   1 200 24   83    1
+    . 
+    . $s2
+    . Events:
+    .   time cmt amt ii addl evid
+    . 1    0   1 100 24   83    1
+    . 2 2016   1 100 24   83    1
+    . 
+    . $s3
+    . Events:
+    .   time cmt amt ii addl evid
+    . 1    0   1 500 24  168    1
+    . 
+    . $a
+    . Events:
+    .   time cmt amt ii addl evid
+    . 1    0   1 100 24   83    1
+    . 
+    . $b
+    . Events:
+    .   time cmt amt ii addl evid
+    . 1    0   1 200 24   83    1
+    . 
+    . $c
+    . Events:
+    .   time cmt amt ii addl evid
+    . 1    0   1 500 24  168    1
+
+covariate sets
+
+``` r
+covsets(run)
+```
+
+    . $cov1
+    .  Formulae                             
+    .    WT~rlnorm(meanlog=4.3,sdlog=0.5)|ID
+    .    SEX~rbinomial(p=0.5)               
+    .    AGE~runif(min=21,max=42)           
+    . 
+    . $cov2
+    .  Formulae                             
+    .    WT~rlnorm(meanlog=4.3,sdlog=0.5)|ID
+    .    SEX~rbinomial(p=0.5)               
+    .    AGE~runif(min=12,max=27)
+
+sampling times
+
+``` r
+run$designs
+```
+
+    . $des1
+    . start:  0  end:    4032  delta:  24  offset: 0  min:    0   max:    4032
+
 Simulate
 --------
 
 ``` r
 out <- sim_run(mod,run)
 ```
+
+``` r
+runtime
+```
+
+    .    user  system elapsed 
+    .   0.435   0.011   0.449
 
 ``` r
 dim(out)
@@ -50,11 +151,11 @@ out %>%
 ```
 
     . # A tibble: 3 x 5
-    .     arm      Mean        Min      Max     N
-    .   <chr>     <dbl>      <dbl>    <dbl> <int>
-    . 1  arm1  7.535748 0.02442406 53.22159   250
-    . 2  arm2  3.374540 0.10521101 23.11008   250
-    . 3  arm3 17.732016 0.68618571 94.66082   150
+    .     arm     Mean        Min       Max     N
+    .   <chr>    <dbl>      <dbl>     <dbl> <int>
+    . 1  arm1  6.36500 0.14653057  23.35731   250
+    . 2  arm2  3.23633 0.01889492  23.63264   250
+    . 3  arm3 18.38143 0.13971529 103.67705   150
 
 The simulation run specification
 --------------------------------
