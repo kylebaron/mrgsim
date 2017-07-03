@@ -1,6 +1,6 @@
 Package: mrgscript
 Type: Package
-Title: Scripted simulation with 'mrgsolve'.
+Title: Scripted simulation with 'mrgsolve'
 Version: 0.0.1
 Author: Kyle T. Baron
 Maintainer: Kyle T. Baron <kyleb@metrumrg.com>

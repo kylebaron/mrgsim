@@ -1,9 +1,10 @@
 
-#' @importFrom dmutate mutate_random
-#' @importFrom dplyr data_frame mutate bind_rows left_join as_data_frame
+#' @importFrom dmutate mutate_random covset
+#' @importFrom dplyr data_frame mutate bind_rows left_join as_data_frame slice everything
 #' @importMethodsFrom mrgsolve as.data.frame
-#' @importFrom mrgsolve assign_ev ev tgrid
+#' @importFrom mrgsolve assign_ev ev tgrid as.ev mrgsim
 #' @importFrom yaml yaml.load_file yaml.load
+#' @importFrom stats setNames
 NULL
 
 .yaml1 <- list()
@@ -15,3 +16,7 @@ NULL
 .yaml1$sample <- NA
 .yaml1$covariate <- NA
 .yaml1$covset <- NA
+
+
+globalVariables(c("time","ID","arm", "armn","x"))
+
