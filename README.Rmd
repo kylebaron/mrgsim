@@ -5,6 +5,9 @@ output:
     variant: markdown_github
 ---
 
+
+# Scripted simulation runs with `mrgsolve`
+
 ```{r,echo=FALSE}
 library(knitr)
 knitr::opts_chunk$set(comment='.', message=FALSE)
@@ -15,8 +18,6 @@ library(mrgsim)
 library(mrgsolve)
 library(dplyr)
 ```
-
-# Scripted simulation runs with `mrgsolve`
 
 
 ## Load a model

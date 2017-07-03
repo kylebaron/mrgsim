@@ -1,11 +1,11 @@
+Scripted simulation runs with `mrgsolve`
+========================================
+
 ``` r
 library(mrgsim)
 library(mrgsolve)
 library(dplyr)
 ```
-
-Scripted simulation runs with `mrgsolve`
-========================================
 
 Load a model
 ------------
@@ -50,11 +50,11 @@ out %>%
 ```
 
     . # A tibble: 3 x 5
-    .     arm      Mean         Min      Max     N
-    .   <chr>     <dbl>       <dbl>    <dbl> <int>
-    . 1  arm1  7.097706 0.003359715 36.18642   250
-    . 2  arm2  3.341170 0.086254375 21.59198   250
-    . 3  arm3 17.480715 0.127742831 79.70234   150
+    .     arm      Mean        Min      Max     N
+    .   <chr>     <dbl>      <dbl>    <dbl> <int>
+    . 1  arm1  7.535748 0.02442406 53.22159   250
+    . 2  arm2  3.374540 0.10521101 23.11008   250
+    . 3  arm3 17.732016 0.68618571 94.66082   150
 
 The simulation run specification
 --------------------------------
