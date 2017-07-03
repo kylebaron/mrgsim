@@ -47,8 +47,9 @@ make_periods <- function(x) {
 
 ##' @export
 assemble_formula <- function(...,distribution,call=NULL,formula=NULL,
-                             lb=NULL,ub=NULL,by=NULL,var) {
+                             lb=NULL,ub=NULL,by=NULL,as=NULL,var) {
   if(!is.null(formula)) return(formula)
+  if(is.null(as)) as <- var
   if(is.null(call)) {
     args <- list(...)
     arg_names <- names(args)
@@ -59,9 +60,9 @@ assemble_formula <- function(...,distribution,call=NULL,formula=NULL,
     if(is.character(by)) call <- paste0(call,"|",by)
   }
   if(!all(is.null(c(lb,ub)))) {
-    var <- paste0(var,"[",lb,",",ub,"]")
+    var <- paste0(as,"[",lb,",",ub,"]")
   }
-  paste0(var,"~",call)
+  paste0(as,"~",call)
 }
 
 ##' @export

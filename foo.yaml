@@ -11,11 +11,12 @@ project: /Users/kyleb/Rlibs/mrgsolve/models
 covariate:
   WT:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.5, by: ID, lb: 40, ub: 140}
   SEX:  {distribution: rbinomial, p: 0.5}
-  AGE:  {distribution: runif, min: 21, max: 42}
+  AGE1: {distribution: runif, min: 21, max: 42, as: AGE}
+  AGE2: {distribution: runif, min: 12, max: 27, as: AGE}
 
 covset:
-  cov1: [WT,SEX,AGE]
-  cov2: [SEX,AGE,WT]
+  cov1: [WT,SEX,AGE1]
+  cov2: [WT,SEX,AGE2]
 
 period:
   a: {amt: 100, ii: 24, addl: 83}
