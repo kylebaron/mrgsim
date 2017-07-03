@@ -9,11 +9,11 @@ NULL
 .yaml1 <- list()
 .yaml1$reps <- 1
 .yaml1$name <- "mrgscript simulation"
-.yaml1[c("endpoints", "output_file")] <- NA
+.yaml1[c("endpoints", "output_file")] <- as.character(NA)
 .yaml1[c("model","project")] <- NA
-.yaml1[c("covariate","covset")] <- NA
-.yaml1[c("period","sequence","arm")] <- NA
+.yaml1[c("period","sequence","arm")] <- as.character(NA)
 .yaml1$envir <- NA
 .yaml1$sample <- NA
-
+.yaml1$covariate <- NA
+.yaml1$covset <- NA
 

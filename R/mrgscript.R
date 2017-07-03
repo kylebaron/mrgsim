@@ -79,8 +79,7 @@ make_covsets <- function(x,cov_form=NULL) {
 }
 
 make_designs <- function(x) {
- lapply(x, do.call, what=mrgsolve::tgrid)
-
+  lapply(x, do.call, what=mrgsolve::tgrid)
 }
 
 
@@ -108,7 +107,7 @@ used_sequences <- function(x) {
 }
 
 
-do_covariates <- function(x) !is.na(x$covariate[1])
+do_covariates <- function(x) length(x$covset) > 0
 
 ##' @export
 get_arms <- function(x) {
@@ -147,6 +146,11 @@ load_run <- function(file) {
 
   x <- handle_periods(x)
 
+  if(is.na(x$covset[1])) {
+    x$covset <- list(cov0="no_cov")
+    x$covariate <- c(x$covariate,list(no_cov=list(formula="NULL~mt()")))
+  }
+
   for(i in seq_along(x$arm)) {
     if(is.null(x$arm[[i]]$nid)) {
       stop("nid is required for every arm",call.=FALSE)
@@ -159,6 +163,9 @@ load_run <- function(file) {
     if(is.null(x$arm[[i]]$sequence)){
       x$arm[[i]]$sequence <- names(x$sequence)[1]
     }
+    if(is.null(x$arm[[i]]$covset)) {
+      x$arm[[i]]$covset <- names(x$covset)[1]
+    }
   }
 
   x$arms <- get_arms(x)
@@ -168,21 +175,16 @@ load_run <- function(file) {
   periods <- make_periods(x)
   idata <- get_subjects(x)
 
-  covsets <- list()
-  if(do_covariates(x)) {
-    covsets <- make_covsets(x)
-    check_covsets(covsets,x)
-  }
+  covsets <- make_covsets(x)
+  check_covsets(covsets,x)
 
   x$designs <- make_designs(x$sample)
-
-  data <- mrgsolve::assign_ev(periods[unique(idata$.sequencen)],
-                              idata,".sequencen", join=FALSE)
-
-  x$data <- data
-  x$idata <- idata
   x$periods <- periods
   x$covsets <- covsets
+  x$arms$covsetn <- match(x$arms$covset,names(covsets))
+  x$arms$sequencen <- match(x$arms$sequence,names(periods))
+  x$arms$samplen <- match(x$arms$sample,names(x$sample))
+
   x
 }
 
@@ -203,8 +205,7 @@ sim_run <- function(mod,x,join=FALSE) {
 }
 
 
-calculate_ids <- function(x) {
-  nid <- s_pick(x$arm,"nid")
+calculate_ids <- function(nid) {
   end <- cumsum(nid)
   start <- c(0,end[-length(end)])+1
   ans <- mapply(start,end,SIMPLIFY=FALSE,FUN=function(x,y) {
@@ -212,6 +213,11 @@ calculate_ids <- function(x) {
   })
   names(ans) <- names(x$arm)
   ans
+}
+
+get_ids <- function(x) {
+ nid <- s_pick(x$arm,"nid")
+ calculate_ids(nid)
 }
 
 ##' @export
