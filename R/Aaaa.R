@@ -13,9 +13,8 @@ NULL
 .yaml1[c("endpoints", "output_file")] <- as.character(NA)
 .yaml1[c("model","project")] <- NA
 .yaml1[c("period","sequence","arm")] <- as.character(NA)
-.yaml1$sample <- NA
-.yaml1$covariate <- NA
-.yaml1$covset <- NA
+
+
 
 
 globalVariables(c("time","ID","arm", "armn","x"))

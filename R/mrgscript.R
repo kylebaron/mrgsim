@@ -37,12 +37,18 @@ then_ev <- function(df,x) {
   tim <- sapply(x$period,FUN = function(y) exists("time", y))
   for(i in seq_along(rownames(df))[-1]) {
     j <- i-1
-    if(df[j,"addl"]==0) next
+    if(df[j,"addl"]==0 ) {
+      df[i,"time"] <- df[j,"time"]
+    }
     df[i,"time"] <- df[j,"time"] + df[j,"ii"] * df[j,"addl"] + df[j,"ii"]
   }
   df
 }
 
+na2zero <- function(x) {
+ x[is.na(x)] <- 0
+ x
+}
 make_periods <- function(x) {
   ev <- vector(mode="list", length=length(x$sequence))
   names(ev) <- names(x$sequence)
@@ -51,6 +57,7 @@ make_periods <- function(x) {
     ss <- x$period_ev[sn]
     ss <- lapply(ss,as.data.frame)
     ss <- bind_rows(ss)
+    ss[] <- lapply(ss[],na2zero)
     ev[[i]] <- then_ev(ss,x)
   }
   lapply(ev,as.ev)
@@ -158,8 +165,13 @@ sim_run <- function(mod,x,.Request=x$endpoints) {
 ##' @param file the name of a file containing \code{yaml} run specification
 ##'
 ##' @export
-load_run <- function(file) {
+load_run <- function(file,text=NULL) {
 
+  if(is.character(text)) {
+    file <- tempfile()
+    writeLines(con=file,text)
+  }
+  
   if(!file.exists(file)) {
     stop("could not find file ", file, call.=FALSE)
   }
@@ -167,10 +179,17 @@ load_run <- function(file) {
   x <- yaml.load_file(file)
 
   x$file <- file
-
+  
   missing <- setdiff(names(.yaml1),names(x))
 
   x <- c(x,.yaml1[missing])
+  
+  if(is.null(x$endpoints)) {
+    stop("please specify endpoints to monitor",call.=FALSE)
+  }
+  if(is.null(x$sample)) {
+    stop("please specify sampling times",call.=FALSE) 
+  }
 
   x$envir <- new.env()
   rcode <- NULL
@@ -184,9 +203,11 @@ load_run <- function(file) {
 
   x <- handle_periods(x)
 
-  if(is.na(x$covset[1])) {
+  if(is.null(x$covariate)) {
+    x$covariate <- list(no_cov=list(formula="NULL~mt()")) 
+  }
+  if(is.null(x$covset)) {
     x$covset <- list(cov0="no_cov")
-    x$covariate <- c(x$covariate,list(no_cov=list(formula="NULL~mt()")))
   }
 
   for(i in seq_along(x$arm)) {
@@ -216,6 +237,13 @@ load_run <- function(file) {
 
   check_covsets(covsets,x)
 
+  if(!all(x$arms$covset %in% names(covsets))) {
+    stop("covset not found",call.=FALSE) 
+  }
+  if(!all(x$arms$sequence %in% names(x$sequence))) {
+    stop("sequence not found",call.=FALSE) 
+  }
+  
   x$designs <- make_designs(x$sample)
   x$periods <- periods
   x$covsets <- covsets

@@ -114,6 +114,11 @@ where_first <- function(what,x) {
   as.integer(unlist(regexpr(what,x,fixed=TRUE)))
 }
 
+example <- function(x) {
+  file <- file.path("yaml",paste0(x,".yaml"))
+  system.file(file,package="mrgsim")
+}
+
 #
 # eval_ENV_block <- function(x,where,envir=new.env(),...) {
 #   .x <- try(eval(parse(text=x),envir=envir))
