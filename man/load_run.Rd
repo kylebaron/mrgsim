@@ -4,7 +4,7 @@
 \alias{load_run}
 \title{Load a simulation run from file.}
 \usage{
-load_run(file)
+load_run(file, text = NULL)
 }
 \arguments{
 \item{file}{the name of a file containing \code{yaml} run specification}

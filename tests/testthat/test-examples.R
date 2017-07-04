@@ -1,6 +1,6 @@
 # Copyright (C) 2013 - 2017  Metrum Research Group, LLC
 #
-# This file is part of mrgsim.
+# This file is part of mrgsim
 #
 # mrgsim is free software: you can redistribute it and/or modify it
 # under the terms of the GNU General Public License as published by
@@ -13,11 +13,22 @@
 # GNU General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with mrgsim  If not, see <http://www.gnu.org/licenses/>.
+# along with mrgsim.  If not, see <http://www.gnu.org/licenses/>.
 
-Sys.setenv("R_TESTS" = "")
 library(testthat)
 library(mrgsim)
+library(dplyr)
+Sys.setenv(R_TESTS="")
 
-test_check("mrgsim", reporter="summary")
 
+
+context("Testing example specifications")
+
+exdir <- function() {
+  file.path(system.file(package="mrgsolve"))
+}
+  
+test_that("test all examples", {
+
+  
+})
