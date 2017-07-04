@@ -1,0 +1,11 @@
+name: test
+
+sample:
+  des1: {end: 6, delta: 2, add: [1,3]}
+
+period:
+  p1: {amt: 100, ii: 24, addl: 9}
+
+arm: 
+  a1: {nid: 30}
+

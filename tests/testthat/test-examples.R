@@ -20,15 +20,27 @@ library(mrgsim)
 library(dplyr)
 Sys.setenv(R_TESTS="")
 
-
-
 context("Testing example specifications")
 
 exdir <- function() {
-  file.path(system.file(package="mrgsolve"))
+  where <- system.file(package="mrgsim")
+  file.path(where,"example")
 }
-  
-test_that("test all examples", {
 
+files <- list.files(exdir(),full.names=TRUE)
+
+mod <- mrgsolve:::house()
+
+test_that("test example 1", {
+  run <- load_run(files[1])
+  out <- sim_run(mod,run)
+  expect_is(out,"data.frame")
+  
+})
+
+test_that("test example 2", {
+  run <- load_run(files[1])
+  out <- sim_run(mod,run)
+  expect_is(out,"data.frame")
   
 })
