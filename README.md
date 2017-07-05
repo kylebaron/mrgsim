@@ -26,8 +26,119 @@ Load a scripted simulation run
 ------------------------------
 
 ``` r
-run <- load_run("foo.yaml")
+run <- load_run("inst/yaml/foo.yaml")
 ```
+
+Simulate
+--------
+
+``` r
+out <- sim_run(mod,run)
+```
+
+``` r
+runtime
+```
+
+    .    user  system elapsed 
+    .   0.499   0.014   0.515
+
+``` r
+dim(out)
+```
+
+    . [1] 109850      5
+
+``` r
+out %>%
+  group_by(arm) %>% 
+  filter(time==4032) %>%
+  summarise(Mean = mean(DV), Min = min(DV), Max = max(DV), N=n())
+```
+
+    . # A tibble: 3 x 5
+    .     arm      Mean        Min       Max     N
+    .   <chr>     <dbl>      <dbl>     <dbl> <int>
+    . 1  arm1  7.014079 0.11433253  78.11614   250
+    . 2  arm2  3.492472 0.09303598  22.02542   250
+    . 3  arm3 17.942659 0.65358606 112.13541   150
+
+The simulation run specification
+--------------------------------
+
+      name: Simulation 1
+      
+      endpoints: [DV,CP,RESP]
+      
+      output_file: saved.RDS
+      
+      model: irm1
+      
+      project: /Users/kyleb/Rlibs/mrgsolve/models
+      
+      covariate:
+        WT:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.5, by: ID, lb: 40, ub: 140}
+        SEX:  {distribution: rbinomial, p: 0.5}
+        AGE1: {distribution: runif, min: 21, max: 42, as: AGE}
+        AGE2: {distribution: runif, min: 12, max: 27, as: AGE}
+      
+      covset:
+        cov1: [WT,SEX,AGE1]
+        cov2: [WT,SEX,AGE2]
+      
+      period:
+        a: {amt: 100, ii: 24, addl: 83}
+        b: {amt: 200, ii: 24, addl: 83}
+        c: {amt: 500, ii: 24, addl: 168}
+      
+      sequence:
+        s1: [a, b]
+        s2: [a, a]
+        s3: [c]
+      
+      sample:
+        des1: {end: 4032, delta: 24, add: [0]}
+      
+      arm:
+        arm1: {nid: 250, sequence: s1, covset: cov1}
+        arm2: {nid: 250, sequence: s2, covset: cov2}
+        arm3: {nid: 150, sequence: c,  covset: cov1}
+      
+      objects:
+        - "Sigma <- diag(c(1,1))"
+        - "mu <- log(c(2,20))"
+
+Run specification for pediatric / adult pk
+------------------------------------------
+
+      name: Pediatrics and adults, same dose
+      
+      endpoints: [DV]
+      
+      output_file: saved.RDS
+      
+      model: popex
+      
+      covariate:
+        WT1:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.5, by: ID, lb: 50, ub: 120, as: WT}
+        WT2:   {distribution: rlnorm,  meanlog: 3.6 , sdlog: 0.5, by: ID, lb: 25, ub: 80,  as: WT}
+      
+      covset:
+        cov1: [WT1]
+        cov2: [WT2]
+      
+      period:
+        dose100: {amt: 100, ii: 24, addl: 168}
+      
+      sample:
+        des1: {end: 4032, delta: 24, add: [0]}
+      
+      arm:
+        adult:     {nid: 250, sequence: dose100, covset: cov1}
+        pediatric: {nid: 250, sequence: dose100, covset: cov2}
+
+Run specification details
+-------------------------
 
 The run has arms
 
@@ -122,111 +233,3 @@ run$designs
 
     . $des1
     . start:  0  end:    4032  delta:  24  offset: 0  min:    0   max:    4032
-
-Simulate
---------
-
-``` r
-out <- sim_run(mod,run)
-```
-
-``` r
-runtime
-```
-
-    .    user  system elapsed 
-    .   0.435   0.011   0.449
-
-``` r
-dim(out)
-```
-
-    . [1] 109850      5
-
-``` r
-out %>%
-  group_by(arm) %>% 
-  filter(time==4032) %>%
-  summarise(Mean = mean(DV), Min = min(DV), Max = max(DV), N=n())
-```
-
-    . # A tibble: 3 x 5
-    .     arm     Mean        Min       Max     N
-    .   <chr>    <dbl>      <dbl>     <dbl> <int>
-    . 1  arm1  6.36500 0.14653057  23.35731   250
-    . 2  arm2  3.23633 0.01889492  23.63264   250
-    . 3  arm3 18.38143 0.13971529 103.67705   150
-
-The simulation run specification
---------------------------------
-
-      name: Simulation 1
-      
-      endpoints: [DV,CP,RESP]
-      
-      output_file: saved.RDS
-      
-      model: irm1
-      
-      project: /Users/kyleb/Rlibs/mrgsolve/models
-      
-      covariate:
-        WT:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.5, by: ID, lb: 40, ub: 140}
-        SEX:  {distribution: rbinomial, p: 0.5}
-        AGE1: {distribution: runif, min: 21, max: 42, as: AGE}
-        AGE2: {distribution: runif, min: 12, max: 27, as: AGE}
-      
-      covset:
-        cov1: [WT,SEX,AGE1]
-        cov2: [WT,SEX,AGE2]
-      
-      period:
-        a: {amt: 100, ii: 24, addl: 83}
-        b: {amt: 200, ii: 24, addl: 83}
-        c: {amt: 500, ii: 24, addl: 168}
-      
-      sequence:
-        s1: [a, b]
-        s2: [a, a]
-        s3: [c]
-      
-      sample:
-        des1: {end: 4032, delta: 24, add: [0]}
-      
-      arm:
-        arm1: {nid: 250, sequence: s1, covset: cov1}
-        arm2: {nid: 250, sequence: s2, covset: cov2}
-        arm3: {nid: 150, sequence: c,  covset: cov1}
-      
-      objects:
-        - "Sigma <- diag(c(1,1))"
-        - "mu <- log(c(2,20))"
-
-Run specification for pediatric / adult pk
-------------------------------------------
-
-      name: Pediatrics and adults, same dose
-      
-      endpoints: [DV]
-      
-      output_file: saved.RDS
-      
-      model: popex
-      
-      covariate:
-        WT1:   {distribution: rlnorm,  meanlog: 4.3 , sdlog: 0.5, by: ID, lb: 50, ub: 120, as: WT}
-        WT2:   {distribution: rlnorm,  meanlog: 3.6 , sdlog: 0.5, by: ID, lb: 25, ub: 80,  as: WT}
-      
-      covset:
-        cov1: [WT1]
-        cov2: [WT2]
-      
-      period:
-        dose100: {amt: 100, ii: 24, addl: 168}
-      
-      sample:
-        des1: {end: 4032, delta: 24, add: [0]}
-      
-      arm:
-        adult:     {nid: 250, sequence: dose100, covset: cov1}
-        pediatric: {nid: 250, sequence: dose100, covset: cov2}

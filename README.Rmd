@@ -29,35 +29,8 @@ param(mod)
 
 ## Load a scripted simulation run
 ```{r}
-run <- load_run("foo.yaml")
+run <- load_run("inst/yaml/foo.yaml")
 ```
-
-
-The run has arms
-```{r}
-arms(run)
-```
-
-treatment sequences
-```{r}
-sequences(run)
-```
-
-treatment periods
-```{r}
-run$periods
-```
-
-covariate sets
-```{r}
-covsets(run)
-```
-
-sampling times
-```{r}
-run$designs
-```
-
 
 
 ## Simulate
@@ -87,15 +60,42 @@ out %>%
 
 ## The simulation run specification
 ```{r,echo=FALSE, comment=" "}
-yam <- readLines("foo.yaml")
+yam <- readLines("inst/yaml/foo.yaml")
 cat(yam, sep="\n")
 ```
 
 ## Run specification for pediatric / adult pk
 ```{r,echo=FALSE, comment=" "}
-yam <- readLines("ped_adult.yaml")
+yam <- readLines("inst/yaml/ped_adult.yaml")
 cat(yam, sep="\n")
 ```
 
 
+## Run specification details
+
+
+The run has arms
+```{r}
+arms(run)
+```
+
+treatment sequences
+```{r}
+sequences(run)
+```
+
+treatment periods
+```{r}
+run$periods
+```
+
+covariate sets
+```{r}
+covsets(run)
+```
+
+sampling times
+```{r}
+run$designs
+```
 
