@@ -46,7 +46,17 @@ handle_periods <- function(x) {
 }
 
 # handle a single period
-handle_period <- function(x) do.call("ev", x)
+handle_period <- function(x) {
+  
+  if(identical(names(x),"wait")) {
+    x$amt <- 0
+    x$time <- x$wait
+    x$wait <- NULL
+    x$evid <- -2
+  }
+  
+  do.call("ev", x)
+}
 
 then_ev <- function(df,x) {
   if(nrow(df) <=1) return(df)
@@ -65,18 +75,16 @@ na2zero <- function(x) {
  x[is.na(x)] <- 0
  x
 }
+
 make_periods <- function(x) {
   ev <- vector(mode="list", length=length(x$sequence))
   names(ev) <- names(x$sequence)
   for(i in seq_along(x$sequence)) {
     sn <- x$sequence[[i]]
     ss <- x$period_ev[sn]
-    ss <- lapply(ss,as.data.frame)
-    ss <- bind_rows(ss)
-    ss[] <- lapply(ss[],na2zero)
-    ev[[i]] <- then_ev(ss,x)
+    ev[[i]] <- seq_ev(.dots=ss)
   }
-  lapply(ev,as.ev)
+  ev
 }
 
 assemble_formula <- function(...,distribution,call=NULL,formula=NULL,
@@ -270,3 +278,34 @@ load_run <- function(file,text=NULL) {
   x
 }
 
+tran2zero <- c("ii", "addl", "rate", "ss")
+
+seq_ev <- function(...,.dots=list()) {
+  evs <- c(list(...),.dots)
+  evs <- lapply(evs,as.data.frame)
+  df <- bind_rows(evs)
+  
+  if(any(names(df) %in% tran2zero)) {
+    where <- which(names(df) %in% tran2zero)
+    df[,where] <- lapply(df[,where],na2zero)
+  }
+  
+  miss <- sapply(df,is.na)
+  if(any(miss)) {
+    which_miss <- apply(miss,MARGIN=2,FUN=function(x) any(x))
+    miss <- paste(colnames(miss)[which_miss],collapse=",")
+    stop("incompatible columns ", miss, call.=FALSE) 
+  }
+  
+  for(i in seq_along(rownames(df))[-1]) {
+    j <- i-1
+    
+    df[i,"time"] <- df[j,"time"] + df[i,"time"] + df[j,"ii"]
+    
+    if(df[j,"addl"] > 0) {
+      df[i,"time"] <- df[i,"time"] + df[j,"ii"]*df[j,"addl"]
+    } 
+  }
+  df <- filter(df,evid > 0)
+  as.ev(df)
+}
