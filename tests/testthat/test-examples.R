@@ -18,6 +18,7 @@
 library(testthat)
 library(mrgsim)
 library(dplyr)
+library(mrgsolve)
 Sys.setenv(R_TESTS="")
 
 context("Testing example specifications")

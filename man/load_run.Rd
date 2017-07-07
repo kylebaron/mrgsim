@@ -7,7 +7,9 @@
 load_run(file, text = NULL)
 }
 \arguments{
-\item{file}{the name of a file containing \code{yaml} run specification}
+\item{file}{name of file containing \code{yaml} run specification}
+
+\item{text}{yaml code specifying a simultion run}
 }
 \description{
 Load a simulation run from file.
