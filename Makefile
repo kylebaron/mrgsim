@@ -9,9 +9,9 @@ CHKDIR=.
 ## Set libPaths:
 export R_LIBS=${LIBDIR}
 
-ec:
-	echo ${VERSION}
-
+travis:
+	make build
+	R CMD check ${TARBALL}
 cran:
 	make doc
 	make build
