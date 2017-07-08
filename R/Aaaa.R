@@ -16,8 +16,6 @@
 # along with mrgsim.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
-
 #' @importFrom dmutate mutate_random covset rbinomial rmvnorm rlmvnorm
 #' @importFrom dplyr data_frame mutate bind_rows left_join as_data_frame 
 #' @importFrom dplyr slice everything filter

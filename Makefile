@@ -12,6 +12,7 @@ export R_LIBS=${LIBDIR}
 travis:
 	make build
 	R CMD check ${TARBALL}
+
 cran:
 	make doc
 	make build
