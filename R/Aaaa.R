@@ -23,7 +23,7 @@
 #' @importFrom mrgsolve assign_ev ev tgrid as.ev mrgsim
 #' @importFrom yaml yaml.load_file yaml.load
 #' @importFrom stats setNames
-#' @importFrom mrgsolvetk ev_seq
+#' @importFrom mrgsolve ev_seq init
 NULL
 
 .yaml1 <- list()

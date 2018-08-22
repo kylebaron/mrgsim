@@ -156,6 +156,9 @@ get_ids <- function(x) {
 sim_run <- function(mod,x,.Request=x$endpoints) {
   out <- vector(mode="list", length(length(x$arm)))
   ids <- get_ids(x)
+  if(is.na(.Request)) {
+    .Request <- c(names(init(mod)),mod@capture)
+  }
   for(i in seq_along(x$arm)) {
     .arm <- slice(x$arms,i)
     ev <- x$periods[[.arm$sequence]]
@@ -203,11 +206,11 @@ load_run <- function(file,text=NULL) {
 
   x <- c(x,.yaml1[missing])
   
-  if(is.null(x$endpoints)) {
-    stop("please specify endpoints to monitor",call.=FALSE)
+  if(is.na(x$endpoints)) {
+    #stop("please specify endpoints to monitor",call.=FALSE)
   }
-  if(is.null(x$sample)) {
-    stop("please specify sampling times",call.=FALSE) 
+  if(is.na(x$sample)) {
+    #stop("please specify sampling times",call.=FALSE) 
   }
 
   x$envir <- new.env()
